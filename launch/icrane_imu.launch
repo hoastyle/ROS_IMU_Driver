@@ -1,0 +1,3 @@
+<launch>
+<node pkg="icrane_imu" type="icrane_imu_node" name="icrane_imu_node" output="screen" />
+</launch>
