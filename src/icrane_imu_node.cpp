@@ -189,10 +189,10 @@ bool IMUEngine::readIMUData(MM_IMU_DATA &imu)
 
         imu.timestamp = imu.clock + mDeltaTime;
 
-        printf("Roll: %f Pitch: %f\n", imu.roll, imu.pitch);
-        printf("%f %f %f %f %f %f\n", imu.XRate, imu.YRate, imu.ZRate, imu.XAccel, imu.YAccel, imu.ZAccel);
-        printf("Clock: %u, Timestamp: %lf\n", imu.clock, imu.timestamp);
-        printf("The parsed IMU data is %f %f %f %f\n", imu.XVelocity, imu.midHeading, imu.offset, imu.position);
+        // printf("Roll: %f Pitch: %f\n", imu.roll, imu.pitch);
+        // printf("%f %f %f %f %f %f\n", imu.XRate, imu.YRate, imu.ZRate, imu.XAccel, imu.YAccel, imu.ZAccel);
+        // printf("Clock: %u, Timestamp: %lf\n", imu.clock, imu.timestamp);
+        // printf("The parsed IMU data is %f %f %f %f\n", imu.XVelocity, imu.midHeading, imu.offset, imu.position);
         return true;
     }
     else
@@ -293,7 +293,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "icrane_imu");
     ros::NodeHandle node;
     ros::Publisher imuPub = node.advertise<sensor_msgs::Imu>("imu", 20);
-    ros::Rate loop_rate(50);
+    ros::Rate loop_rate(100);
 
     std::string yamlFile = "/home/hao/Workspace/SLAM/IMU/ws/src/icrane_imu/imu_device.yaml";
     YAML::Node imuConfig = YAML::LoadFile(yamlFile);
@@ -316,9 +316,9 @@ int main(int argc, char **argv)
         imu_data.angular_velocity.x = data.XRate * PI / 180;
         imu_data.angular_velocity.y = data.YRate * PI / 180;
         imu_data.angular_velocity.z = data.ZRate * PI / 180;
-        ROS_INFO_STREAM(data.XRate);
-        ROS_INFO_STREAM(data.YRate);
-        ROS_INFO_STREAM(data.ZRate);
+        // ROS_INFO_STREAM(data.XRate);
+        // ROS_INFO_STREAM(data.YRate);
+        // ROS_INFO_STREAM(data.ZRate);
 
         imuPub.publish(imu_data);
         ros::spinOnce();
