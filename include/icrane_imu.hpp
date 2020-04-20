@@ -19,47 +19,62 @@
  * Shanghai Master Matrix's suppliers or licensors in any way.
  */
 
-#include <ctime>
-#include <cmath>
-#include <ros/ros.h>
-#include <sensor_msgs/Imu.h>
-#include "IMUEngine.hpp"
+#ifndef ICRANE_IMU_HPP
+#define ICRANE_IMU_HPP 
 
-#define PI 3.1415926535898
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <fstream>
+#include <unistd.h>
+#include <yaml.h>
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
+#include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
+#include "iostream"
 
-int main(int argc, char **argv)
+typedef enum
 {
-    ros::init(argc, argv, "icrane_imu");
-    ros::NodeHandle node;
-    ros::Publisher imuPub = node.advertise<sensor_msgs::Imu>("imu", 20);
-    ros::Rate loop_rate(100);
+    REMOVE_CACHE = 0,
+    COMPLETE_PACK = 1,
+    IMU_DATA_DONE = 2
+} MM_IMU_ENGINE_STATUS;
 
-    std::string yamlFile = CONFIG_PATH "imu_device.yaml";
-    YAML::Node imuConfig = YAML::LoadFile(yamlFile);
+typedef struct             
+{                          
+    uint32_t milliTy;      
+    uint16_t triTy;        
+    uint32_t milliIMU;     
+    uint16_t triIMU;       
+    uint64_t milliUTC;     
+} MM_UTCTime;              
 
-    std::string ip = imuConfig["ip"].as<std::string>();
-    MM_IMU_DATA data;
-    boost::shared_ptr<IMUEngine> pImu(new IMUEngine(ip));
-    pImu->Init();
+typedef struct
+{
+    uint32_t clock;
+    float roll;
+    float pitch;
+    float heading;
+    float XRate;
+    float YRate;
+    float ZRate;
+    float XAccel;
+    float YAccel;
+    float ZAccel;
+    float XVelocity;
+    float midHeading;
+    float offset;
+    float position;
+    double timestamp;
+    uint32_t index;
+} MM_IMU_DATA;
 
-    while(ros::ok())
-    {
-        ROS_INFO_STREAM("test----------------");
-        sensor_msgs::Imu imu_data;
-        pImu->readIMUData(data);
-        imu_data.header.stamp = ros::Time::now();
-        imu_data.header.frame_id = "imu_link";
-        imu_data.linear_acceleration.x = data.XAccel;
-        imu_data.linear_acceleration.y = data.YAccel;
-        imu_data.linear_acceleration.z = data.ZAccel;
-        imu_data.angular_velocity.x = data.XRate * PI / 180;
-        imu_data.angular_velocity.y = data.YRate * PI / 180;
-        imu_data.angular_velocity.z = data.ZRate * PI / 180;
-
-        imuPub.publish(imu_data);
-        ros::spinOnce();
-        loop_rate.sleep();
-    }
-
-    return 0;
-}
+#endif //ICRANE_IMU_HPP

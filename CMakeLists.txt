@@ -119,8 +119,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
-  include/icrane_imu
+  include/
   /usr/local/include/yaml-cpp/
   ${catkin_INCLUDE_DIRS}
 )
@@ -139,7 +138,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/icrane_imu_node.cpp)
-add_executable(${PROJECT_NAME}_node src/icrane_imu_node.cpp)
+add_executable(${PROJECT_NAME}_node src/icrane_imu_node.cpp src/IMUEngine.cpp src/SocketComm.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -159,6 +158,8 @@ target_link_libraries(${PROJECT_NAME}_node
   yaml-cpp
   ${catkin_LIBRARIES}
 )
+
+add_definitions(-DCONFIG_PATH="${PROJECT_SOURCE_DIR}/")
 
 #############
 ## Install ##
